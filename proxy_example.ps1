@@ -54,7 +54,7 @@ param(
 }
 
 StateConfigurationLegacyProxy @MetaParams -out c:\ProgramData\StateConfig\Registration
-#Set-DscLocalConfigurationManager -Path c:\ProgramData\StateConfig\Registration -Verbose
+Set-DscLocalConfigurationManager -Path c:\ProgramData\StateConfig\Registration -Verbose
 
 Configuration Proxy
 {
@@ -82,6 +82,6 @@ param(
 }
 
 Proxy @ProxyParams -out c:\ProgramData\StateConfig\Proxy
-#Publish-DscConfiguration -Path c:\ProgramData\StateConfig\Proxy -Verbose
+Publish-DscConfiguration -Path c:\ProgramData\StateConfig\Proxy -Verbose
 
 Remove-Item -Path c:\ProgramData\StateConfig -Recurse -Force
