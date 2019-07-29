@@ -12,6 +12,34 @@ $ProxyParams = @{
 Install-PackageProvider -Name Nuget -Force
 Install-Module NetworkingDsc -Force
 
+Configuration Proxy
+{
+param(
+    [Parameter(Mandatory=$true)]
+    [string]$ProxyServer,
+    [string]$ProxyServerExceptions
+)
+    Import-DSCResource -ModuleName NetworkingDsc
+
+    Node localhost
+    {
+        ProxySettings ManualProxy
+        {
+            IsSingleInstance        = 'Yes'
+            Ensure                  = 'Present'
+            EnableAutoDetection     = $false
+            EnableAutoConfiguration = $false
+            EnableManualProxy       = $true
+            ProxyServer             = $ProxyServer
+            ProxyServerExceptions   = $ProxyServerExceptions
+            ProxyServerBypassLocal  = $true
+        }
+    }
+}
+
+Proxy @ProxyParams -out c:\ProgramData\StateConfig\Proxy
+Publish-DscConfiguration -Path c:\ProgramData\StateConfig\Proxy -Verbose
+
 [DscLocalConfigurationManager()]
 Configuration StateConfigurationLegacyProxy
 {
@@ -55,33 +83,5 @@ param(
 
 StateConfigurationLegacyProxy @MetaParams -out c:\ProgramData\StateConfig\Registration
 Set-DscLocalConfigurationManager -Path c:\ProgramData\StateConfig\Registration -Verbose
-
-Configuration Proxy
-{
-param(
-    [Parameter(Mandatory=$true)]
-    [string]$ProxyServer,
-    [string]$ProxyServerExceptions
-)
-    Import-DSCResource -ModuleName NetworkingDsc
-
-    Node localhost
-    {
-        ProxySettings ManualProxy
-        {
-            IsSingleInstance        = 'Yes'
-            Ensure                  = 'Present'
-            EnableAutoDetection     = $false
-            EnableAutoConfiguration = $false
-            EnableManualProxy       = $true
-            ProxyServer             = $ProxyServer
-            ProxyServerExceptions   = $ProxyServerExceptions
-            ProxyServerBypassLocal  = $true
-        }
-    }
-}
-
-Proxy @ProxyParams -out c:\ProgramData\StateConfig\Proxy
-Publish-DscConfiguration -Path c:\ProgramData\StateConfig\Proxy -Verbose
 
 Remove-Item -Path c:\ProgramData\StateConfig -Recurse -Force
